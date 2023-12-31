@@ -24,7 +24,8 @@ def dist_3d(pnt1,pnt2):
     return sqrt((pnt1.matrix[0][0]-pnt2.matrix[0][0])**2+(pnt1.matrix[1][0]-pnt2.matrix[1][0])**2+(pnt1.matrix[2][0]-pnt2.matrix[2][0])**2)
 
 def get_color(dist,color):
-    l=200/(dist+100)
+    #l=200/(dist+100)
+    l=150/(dist+25)
     return (min(255,l*color[0]),min(255,l*color[1]),min(255,l*color[2]))
 
 class Point:
