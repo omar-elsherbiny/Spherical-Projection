@@ -100,7 +100,7 @@ class Matrix:
     def __matmul__(self, other):
         if isinstance(other, Matrix):
             if self.size*other.size:
-                m=[[0 for j in range(other.size.c)]for i in range(self.size.r)]
+                m=[[0 for j in range(other.size.c)] for i in range(self.size.r)]
                 for r in range(self.size.r):
                     for c in range(other.size.c):
                         sum=0
