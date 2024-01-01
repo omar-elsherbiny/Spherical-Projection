@@ -19,10 +19,12 @@ FONT2 = pyg.font.Font(resource_path("Comfortaa-Bold.ttf"), 13)
 
 class Basis:
     vects = [np.array([1, 0, 0]), np.array([0, 1, 0]), np.array([0, 0, 1])]
-    def draw_basis(self, screen, matrix, scale, x, y):
-        pyg.draw.line(screen, (255, 10, 50), (x, y), (int((matrix@self.vects[0]*scale)[0])+x, -int((matrix@self.vects[0]*scale)[1])+y), 3)
-        pyg.draw.line(screen, (50, 255, 10), (x, y), (int((matrix@self.vects[1]*scale)[0])+x, -int((matrix@self.vects[1]*scale)[1])+y), 3)
-        pyg.draw.line(screen, (10, 50, 255), (x, y), (int((matrix@self.vects[2]*scale)[0])+x, -int((matrix@self.vects[2]*scale)[1])+y), 3)
+    def __init__(self, scale, x, y):
+        self.s, self.x, self.y = scale, x, y
+    def draw_basis(self, screen, matrix):
+        pyg.draw.line(screen, (255, 10, 50), (self.x, self.y), (int((matrix@self.vects[0]*self.s)[0])+self.x, -int((matrix@self.vects[0]*self.s)[1])+self.y), 3)
+        pyg.draw.line(screen, (50, 255, 10), (self.x, self.y), (int((matrix@self.vects[1]*self.s)[0])+self.x, -int((matrix@self.vects[1]*self.s)[1])+self.y), 3)
+        pyg.draw.line(screen, (10, 50, 255), (self.x, self.y), (int((matrix@self.vects[2]*self.s)[0])+self.x, -int((matrix@self.vects[2]*self.s)[1])+self.y), 3)
 
 # Main
 def main():
@@ -32,14 +34,16 @@ def main():
     Ax, Ay, Az = config['init_angles']
     R = config['radius']
 
+    basis = Basis(config['basis_scale'], config['basis_offset_x'], config['basis_offset_y'])
+
     panning = False
     coords = (0, 0)
     prev_coords = (0, 0)
 
     pnts = []
-    for phi in range(0, 360, 8):
+    for phi in range(0, 360, int(360/config['sphere_density_y'])):
         rY = np.array([[cos(radians(phi)), 0, -sin(radians(phi))],[0, 1, 0], [sin(radians(phi)), 0, cos(radians(phi))]])
-        for theta in range(0, 360, 8):
+        for theta in range(0, 360, int(360/config['sphere_density_xz'])):
             pnts.append(rY@np.array([0, R*sin(radians(theta)), R*cos(radians(theta))]))
 
     print(f'number of points: {len(pnts)}')
@@ -91,7 +95,7 @@ def main():
             dist = np.linalg.norm(pnt - light_source)
             pyg.draw.circle(SCREEN, get_color(dist, (220, 220, 220)), (int(pnt[0]+250), int(-pnt[1]+250)), 6)
 
-        Basis.draw_basis(Basis, SCREEN, rot, 70, 420, 420)
+        basis.draw_basis(SCREEN, rot)
 
         clock.tick(120)
         pyg.display.set_caption(f'Spherical Projection--{int(clock.get_fps())}')
