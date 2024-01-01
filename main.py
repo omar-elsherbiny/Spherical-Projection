@@ -30,7 +30,7 @@ class Basis:
 def main():
     clock = pyg.time.Clock()
 
-    light_source = np.array([0, 50, 200])
+    light_source = np.array(config['light_source'])
     Ax, Ay, Az = config['init_angles']
     R = config['radius']
     dot_size = config['dot_size']

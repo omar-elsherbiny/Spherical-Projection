@@ -17,12 +17,12 @@ f=open(resource_path('config.json'),'r')
 config=json.load(f)
 f.close()
 
-#import config
-
 def get_color(dist,color):
     #l=200/(dist+100)
     l=150/(dist+25)
     return (min(255,l*color[0]),min(255,l*color[1]),min(255,l*color[2]))
+
+#OBJECT
 
 if __name__=='__main__':
    pass
