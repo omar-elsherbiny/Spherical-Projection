@@ -1,9 +1,10 @@
 {
     "init_angles": [30,30,0],
-    "z_clipping": 0.5,
+    "z_clipping": 0.45,
     "radius": 175,
-    "sphere_density_y": 45,
-    "sphere_density_xz": 45,
+    "sphere_density_y": 56,
+    "sphere_density_xz": 56,
+    "dot_size": 8,
     "basis_scale": 70,
     "basis_offset_x": 420,
     "basis_offset_y": 420

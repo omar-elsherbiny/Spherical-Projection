@@ -33,6 +33,7 @@ def main():
     light_source = np.array([0, 50, 200])
     Ax, Ay, Az = config['init_angles']
     R = config['radius']
+    dot_size = config['dot_size']
 
     basis = Basis(config['basis_scale'], config['basis_offset_x'], config['basis_offset_y'])
 
@@ -41,13 +42,13 @@ def main():
     prev_coords = (0, 0)
 
     pnts = []
-    for phi in range(0, 360, int(360/config['sphere_density_y'])):
+    for phi in range(0, 360, round(360/config['sphere_density_y'])):
         rY = np.array([[cos(radians(phi)), 0, -sin(radians(phi))],[0, 1, 0], [sin(radians(phi)), 0, cos(radians(phi))]])
-        for theta in range(0, 360, int(360/config['sphere_density_xz'])):
+        for theta in range(0, 360, round(360/config['sphere_density_xz'])):
             pnts.append(rY@np.array([0, R*sin(radians(theta)), R*cos(radians(theta))]))
 
-    print(f'number of points: {len(pnts)}')
     clipping_len = round(len(pnts)*(1-config['z_clipping']))
+    print(f'no. of points: {len(pnts)}\nz_clipped: {clipping_len}\nremaining: {len(pnts)-clipping_len}')
     rot_pnts = pnts
     rot = np.ones((3, 3))
 
@@ -93,7 +94,7 @@ def main():
 
         for pnt in rot_pnts:
             dist = np.linalg.norm(pnt - light_source)
-            pyg.draw.circle(SCREEN, get_color(dist, (220, 220, 220)), (int(pnt[0]+250), int(-pnt[1]+250)), 6)
+            pyg.draw.circle(SCREEN, get_color(dist, (220, 220, 220)), (int(pnt[0]+250), int(-pnt[1]+250)), dot_size)
 
         basis.draw_basis(SCREEN, rot)
 
