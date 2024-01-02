@@ -31,15 +31,17 @@ def main():
     coords = (0, 0)
     prev_coords = (0, 0)
 
+    image = SphereImage('temp',(config['sphere_density_xz'],config['sphere_density_y']))
+
     pnts = []
-    for phi in range(0, 360, round(360/config['sphere_density_y'])):
-        rY = np.array([[cos(radians(phi)), 0, -sin(radians(phi))],[0, 1, 0], [sin(radians(phi)), 0, cos(radians(phi))]])
-        for theta in range(0, 360, round(360/config['sphere_density_xz'])):
-            x=rY@np.array([0, R*sin(radians(theta)), R*cos(radians(theta))])
-            if theta <= 180:
-                pnts.append(Node(x,(220,0,0)))
-            else:
-                pnts.append(Node(x))
+    for i in range(0, config['sphere_density_y']):
+        phi = radians(range_lerp(config['sphere_density_y'],360,i))
+        rY = np.array([[cos(phi), 0, -sin(phi)],[0, 1, 0], [sin(phi), 0, cos(phi)]])
+        for j in range(0, int(config['sphere_density_xz']/2)):
+            theta = radians(range_lerp(config['sphere_density_xz'],360,j-87))
+            x=rY@np.array([0, R*sin(theta), R*cos(theta)])
+            #pnts.append(Node(x,(28,28,28)))
+            pnts.append(Node(x,image.get_color(i,j)))
 
     clipping_len = round(len(pnts)*(1-config['z_clipping']))
     print(f'no. of points: {len(pnts)}\nz_clipped: {clipping_len}\nremaining: {len(pnts)-clipping_len}')
