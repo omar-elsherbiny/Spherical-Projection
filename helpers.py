@@ -80,7 +80,7 @@ class SphereImage:
                 raise ValueError("Given res does not match map res")
 
             self.color_map = {k: tuple(map(int, v[1:-1].split(','))) for k, v in [i.split(':') for i in data[3:3+int(data[2])]]}
-            self.map = list(map(list, data[3+int(data[2]):]))[::-1]
+            self.map = list(map(lambda x: list(x)[::-1], data[3+int(data[2]):]))[::-1]
             if len(self.map) != int(self.res[0]/2) or len(self.map[0]) != self.res[1]*2:
                 raise ValueError("Given res does not match actual file res")
 
