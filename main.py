@@ -16,16 +16,6 @@ SCREEN = pyg.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 FONT = pyg.font.Font(resource_path("Comfortaa-Bold.ttf"), 20)
 FONT2 = pyg.font.Font(resource_path("Comfortaa-Bold.ttf"), 13)
 
-
-class Basis:
-    vects = [np.array([1, 0, 0]), np.array([0, 1, 0]), np.array([0, 0, 1])]
-    def __init__(self, scale, x, y):
-        self.s, self.x, self.y = scale, x, y
-    def draw_basis(self, screen, matrix):
-        pyg.draw.line(screen, (255, 10, 50), (self.x, self.y), (int((matrix@self.vects[0]*self.s)[0])+self.x, -int((matrix@self.vects[0]*self.s)[1])+self.y), 3)
-        pyg.draw.line(screen, (50, 255, 10), (self.x, self.y), (int((matrix@self.vects[1]*self.s)[0])+self.x, -int((matrix@self.vects[1]*self.s)[1])+self.y), 3)
-        pyg.draw.line(screen, (10, 50, 255), (self.x, self.y), (int((matrix@self.vects[2]*self.s)[0])+self.x, -int((matrix@self.vects[2]*self.s)[1])+self.y), 3)
-
 # Main
 def main():
     clock = pyg.time.Clock()
@@ -45,7 +35,11 @@ def main():
     for phi in range(0, 360, round(360/config['sphere_density_y'])):
         rY = np.array([[cos(radians(phi)), 0, -sin(radians(phi))],[0, 1, 0], [sin(radians(phi)), 0, cos(radians(phi))]])
         for theta in range(0, 360, round(360/config['sphere_density_xz'])):
-            pnts.append(rY@np.array([0, R*sin(radians(theta)), R*cos(radians(theta))]))
+            x=rY@np.array([0, R*sin(radians(theta)), R*cos(radians(theta))])
+            if theta <= 180:
+                pnts.append(Node(x,(220,0,0)))
+            else:
+                pnts.append(Node(x))
 
     clipping_len = round(len(pnts)*(1-config['z_clipping']))
     print(f'no. of points: {len(pnts)}\nz_clipped: {clipping_len}\nremaining: {len(pnts)-clipping_len}')
@@ -88,13 +82,13 @@ def main():
 
         if np.any(nrot != rot):
             rot = nrot
-            rot_pnts = list(map(lambda x: rot@x, pnts))
+            rot_pnts = list(map(lambda x: x@rot, pnts))
             rot_pnts.sort(key=lambda x: x[2])
-            rot_pnts = np.array(rot_pnts[clipping_len:])
+            rot_pnts = np.array(rot_pnts[clipping_len:], dtype=object)
 
         for pnt in rot_pnts:
             dist = np.linalg.norm(pnt - light_source)
-            pyg.draw.circle(SCREEN, get_color(dist, (220, 220, 220)), (int(pnt[0]+250), int(-pnt[1]+250)), dot_size)
+            pyg.draw.circle(SCREEN, get_color(dist, pnt.color), (int(pnt[0]+250), int(-pnt[1]+250)), dot_size)
 
         basis.draw_basis(SCREEN, rot)
 
