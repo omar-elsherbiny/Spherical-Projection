@@ -58,9 +58,25 @@ class Node():
             return self.pos[index]
         else:
             raise TypeError("Index must be an integer")
+        
+class SphereImage:
+    def __init__(self, filename, res):
+        with open('maps/'+filename+'.txt', 'r') as f:
+            self.filename = filename
+            data = f.read().replace('\n','').split(';')
+            self.res = (int(data[0]),int(data[1]))
+            if res != self.res:
+                raise ValueError("Given res does not match map res")
+            
+            self.color_map = {k:tuple(map(int, v[1:-1].split(','))) for k,v in [i.split(':') for i in data[3:3+int(data[2])]]}
+            self.map = list(map(list, data[4+int(data[2]):]))
+            if len(self.map) != self.res[0] or len(self.map[0]) != self.res[1]:
+                raise ValueError("Given res does not match actual file res")
+        
+        def get_color(theta, phi):
+            pass
 
 
 if __name__ == '__main__':
-    a = np.array([1, 2, 3])
-    b = Node([3, 2, 1], color=(220, 0, 0))
-    print(b@a)
+    p = SphereImage('temp',(70,70))
+    print(p.map)
